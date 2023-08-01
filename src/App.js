@@ -1,11 +1,28 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './App.css';
  
+const SquareBlock = (props) => {
+
+  return (
+    <div key={props.square.number} 
+      onClick={() => props.onClick(props.square.number)}
+      style={{
+              position: "absolute",
+              width: props.square.w,
+              height: props.square.h,
+              left: props.square.x,
+              top: props.square.y,
+              backgroundColor: props.square.newColor
+            }} />
+  );
+};
+
 function App() {
   const [squares, setSquares] = useState([]);
+  const [score, setScore] = useState(0);
+  const scoreHeight = 25;
   const screenWidth = window.innerWidth;
-  const screenHeight = window.innerHeight;
-  const [availableSquares, setAvailableSquares] = useState([])
+  const screenHeight = window.innerHeight - scoreHeight;
 
   // initialize the canvas context
   useEffect(() => {
@@ -29,7 +46,6 @@ function App() {
       {
         var remainder = (x % interval);
         (remainder > x / 2) ? x = x + interval - remainder : x = x - remainder;
-        console.log(x);
       }
       return x;
     }
@@ -37,7 +53,7 @@ function App() {
     const w = 5; //randomIntFromInterval(10, 50);
     const h = 5; //randomIntFromInterval(10, 50);
     const x = randomIntFromInterval(0, screenWidth - w, 5);
-    const y = randomIntFromInterval(0, screenHeight - h, 5);
+    const y = randomIntFromInterval(scoreHeight, screenHeight - h, 5);
 
     const generateColor = () => {
         let randomColorString = "#";
@@ -52,23 +68,26 @@ function App() {
     };
 
     const newColor = generateColor();
-    const number = squares.length + 1;
+    let number = 1;
+    if (squares.length > 0) {
+      number = Math.max.apply(null, squares.map(function (o) {return o.number;})) + 1;
+    }
     const newSquares = [...squares, {number: number, x: x, y: y, w: w, h: h, newColor: newColor}];
     setSquares(newSquares);
 
   };
 
+  const squareClick = (number) => {
+    const newSquares = squares.filter(function(el) { return el.number != number; });
+    setScore(score+1);
+    setSquares(newSquares);    
+  };
+
   return (
     <div className="App" width={screenWidth} height={screenHeight}>
+        <label name="scoreLabel">Score: {score}</label>
           {squares.map(square => (
-            <div key={square.number} style={{
-              position: "absolute",
-              width: square.w,
-              height: square.h,
-              left: square.x,
-              top: square.y,
-              backgroundColor: square.newColor
-            }} />
+            <SquareBlock key={square.number} square={square} onClick={squareClick}/>
           ))}
     </div>
   );
