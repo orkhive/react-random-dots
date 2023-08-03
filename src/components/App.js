@@ -1,22 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import './App.css';
+import '../styles/App.css';
+import SquareBlock from './SquareBlock.js';
  
-const SquareBlock = (props) => {
-
-  return (
-    <div key={props.square.number} 
-      onClick={() => props.onClick(props.square.number)}
-      style={{
-              position: "absolute",
-              width: props.square.w,
-              height: props.square.h,
-              left: props.square.x,
-              top: props.square.y,
-              backgroundColor: props.square.newColor
-            }} />
-  );
-};
-
 function App() {
   const [squares, setSquares] = useState([]);
   const [score, setScore] = useState(0);
